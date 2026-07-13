@@ -6,12 +6,7 @@ soft mixture‑of‑experts fusion, with an interpretable σ‑factor *grammar* 
 
 - 📄 **Paper**: `<PAPER_URL>` (TODO)
 - 💾 **Data & weights (Zenodo)**: `<ZENODO_DOI>` (TODO)
-- 🌐 **Interactive demo**: https://phlogistic-rain.github.io/DeepPro-v2/ (see [Interactive demo](#interactive-demo))
-
-> This repository is a **minimal, inference‑only** release: model code, dataset
-> code, and a single‑command inference script that reproduces the reported test
-> metrics from the published weights. Analysis/experiment scripts are not
-> included.
+- 🌐 **Interactive demo**: https://phlogistic-rain.github.io/DeepPro-v2/ 
 
 ---
 
