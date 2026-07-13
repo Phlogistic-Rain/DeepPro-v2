@@ -20,6 +20,109 @@ soft mixture‑of‑experts fusion, with an interpretable σ‑factor *grammar* 
 
 ---
 
+## Results & analysis
+
+DeepPro‑v2 was evaluated on a shared 23‑prokaryote benchmark (5‑fold, independent
+test) against eight published baselines. The five headline figures are shown in
+full below; six further analyses are in the collapsible section. Every figure is
+also explorable at full resolution in the
+[**interactive demo**](https://phlogistic-rain.github.io/DeepPro-v2/).
+
+<p align="center">
+  <img src="docs/assets/figV2/01.performance/fig_performance.png" width="860" alt="Per-species MCC across 23 prokaryotes; DeepPro-v2 ranks first with mean MCC 0.809">
+</p>
+
+**Fig. 1 · Benchmark across 23 prokaryotes.** DeepPro‑v2 attains the best mean
+test MCC (**0.809**) of the nine methods evaluated — ahead of the strongest
+external baseline, msBERT (0.767) — and leads the per‑species MCC map (**a**). It
+wins 6 of 7 metrics among the foundation‑model methods (**b**) and holds the top
+average‑MCC rank overall (**c**).
+
+<p align="center">
+  <img src="docs/assets/figV2/04.expert_complementarity/fig_expert_complementarity.png" width="860" alt="Five experts are complementary; their fusion beats every single expert">
+</p>
+
+**Fig. 2 · Why five experts (complementarity).** The five genomic language‑model
+experts are genuinely complementary — per‑species probe performance shifts from
+expert to expert (**a**), they disagree on distinct examples, and each contributes
+uniquely‑correct predictions (**d**) — so their soft mixture‑of‑experts fusion
+(linear‑probe AUROC 0.948) exceeds every single expert (best 0.921; **b**) and
+narrows the gap toward an oracle upper bound (**c**).
+
+<p align="center">
+  <img src="docs/assets/figV2/05.motif_grammar/fig_motif_grammar.png" width="860" alt="Grammar experts recover the sigma-70 minus-10 box TATAAT; survives label-shuffle control">
+</p>
+
+**Fig. 3 · σ‑factor grammar recovered (standalone capability).** A standalone probe
+of the grammar experts recovers the σ⁷⁰ −10 box (TATAAT): 5 of 6 experts correlate
+positively with the −10 consensus (best *r* = +0.67; **a**, **b**), the recovery
+survives a label‑shuffle control (real *r* = +0.67 vs shuffle‑null mean +0.29;
+**d**), and a weaker −35 signal is also visible (**c**). This is a capability
+demonstration of the grammar branch, not a claim about what the deployed
+classifier attends to.
+
+<p align="center">
+  <img src="docs/assets/figV2/06.representation_umap/fig_representation_umap.png" width="860" alt="UMAP of fused representation separates promoters; separability tracks MCC">
+</p>
+
+**Fig. 4 · Learned representations.** UMAP of the fused representation separates
+promoters from non‑promoters across species (**a**); the fusion exceeds the best
+single‑expert view in nearly all species (mean AUROC 0.943, Δ up to +0.06;
+**b**, **c**), and per‑species separability tracks ensemble test MCC very closely
+(Spearman ρ = 0.89, Pearson *r* = 0.97; **d**).
+
+<p align="center">
+  <img src="docs/assets/figV2/09.cross_species/fig_cross_species_heatmaps.png" width="900" alt="23x23 cross-species transfer MCC organised by phylogeny; non-zero-shot">
+</p>
+
+**Fig. 5 · Cross‑species transfer.** A 23×23 transfer map (train on one species,
+test on another) shows the self‑test diagonal is strongest and off‑diagonal
+transfer is organised by phylogeny, under both genome‑tree and promoter‑tree
+orderings. This is *non‑zero‑shot*: all species share the same TAPT‑adapted
+backbones.
+
+<details>
+<summary><b>▸ Extended analyses — six more figures (calibration · significance · attribution · motifs · diversity · errors)</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/figV2/02.roc_pr_calibration/fig_roc_pr.png" width="100%" alt="ROC, precision-recall, calibration and threshold-MCC curves"></td>
+    <td width="50%"><img src="docs/assets/figV2/03.statistical_significance/fig_significance.png" width="100%" alt="Friedman-Nemenyi diagram, pairwise Wilcoxon, per-species delta MCC"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>Fig. S1 · Discrimination and calibration.</b> ROC and precision–recall across 23 species (macro AUROC 0.954, AUPRC 0.932), probability calibration (ECE 0.025), and MCC stability across decision thresholds.</sub></td>
+    <td align="center"><sub><b>Fig. S2 · Statistical significance.</b> Friedman–Nemenyi critical‑difference diagram (P = 3.6×10⁻²², average rank 1.30, first of nine), pairwise Wilcoxon signed‑rank matrix, and per‑species ΔMCC over the best baseline (wins 19/23).</sub></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/figV2/05b.model_attribution_ism/fig_model_attribution_ism.png" width="100%" alt="In-silico mutagenesis attribution concentrating at minus-10 and plus-1"></td>
+    <td width="50%"><img src="docs/assets/figV2/05c.sequence_motif/fig_sequence_motif.png" width="100%" alt="Two-sample sequence logo and cross-species conservation, including archaeal TATA-box"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>Fig. S3 · Model attribution (ISM).</b> In‑silico mutagenesis of the deployed model concentrates importance at the −10 box and TSS (+1), tracking the data's discriminative positions (Pearson *r* = 0.82). Attribution is read from the foundation‑model experts and head, not the grammar PWM branch.</sub></td>
+    <td align="center"><sub><b>Fig. S4 · Sequence motifs (data‑side).</b> Two‑sample sequence logo and positional information for <i>E. coli</i>, and conservation of promoter elements across all 23 prokaryotes — including the archaeal TATA‑box in <i>H. volcanii</i> and <i>T. kodakarensis</i>. Computed from sequences alone (no model).</sub></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/figV2/07.promoter_diversity/fig_promoter_diversity.png" width="100%" alt="Promoter diversity negatively correlated with separability and MCC"></td>
+    <td width="50%"><img src="docs/assets/figV2/08.error_analysis/fig_error_analysis.png" width="100%" alt="Errors concentrate in high-diversity species; lowest risk-coverage AURC"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>Fig. S5 · Promoter diversity.</b> More diverse promoter repertoires are harder: diversity is negatively correlated with both representation separability (Spearman ρ = −0.59) and ensemble MCC (ρ = −0.58), and the trend holds after controlling for sample size (partial ρ = −0.44).</sub></td>
+    <td align="center"><sub><b>Fig. S6 · Error analysis.</b> Errors concentrate in a few high‑diversity species and hug the decision boundary; on selective prediction DeepPro‑v2 has the fewest confident errors (lowest risk–coverage AURC, 3.9), and difficulty rises with promoter positional entropy (ρ = 0.58).</sub></td>
+  </tr>
+</table>
+
+</details>
+
+---
+
 ## Overview
 
 | view | backbone | pooled dim | source |
