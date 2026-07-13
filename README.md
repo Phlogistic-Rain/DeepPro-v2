@@ -1,4 +1,4 @@
-# DeepPro‑v2 — Multi‑view, multi‑backbone prokaryotic promoter prediction
+# DeepPro-v2: A Mixture-of-Experts Framework for Interpretable Prokaryotic Promoter Prediction
 
 DeepPro‑v2 predicts prokaryotic promoters from 81‑bp DNA sequences by
 aggregating **five** genomic language‑model backbones through a
