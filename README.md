@@ -15,7 +15,7 @@ aggregating **five** genomic language‑model backbones through a
 soft mixture‑of‑experts fusion, with an interpretable σ‑factor *grammar* branch.
 
 - 📄 **Paper**: `<PAPER_URL>` (TODO)
-- 💾 **Data & weights (Zenodo)**: [10.5281/zenodo.21344602](https://doi.org/10.5281/zenodo.21344602)
+- 💾 **Data & weights (Zenodo)**: [zenodo.org/records/21344602](https://zenodo.org/records/21344602?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImM2NWQ3YmMyLTdkMmEtNDFjMS1iNDlmLTYyOTQwY2FlZmYyYiIsImRhdGEiOnt9LCJyYW5kb20iOiI4YTVhNGI3OGZiMTE4NWQ4MWM2MDU4MTM3ZDk1Y2NjZiJ9.zgznyGzDRiuKhrH1wMfE68DVdpgFWpH-9pl2LoxQh7LtMRUXdJ715efByvgmlGTwHWs9MHK5AjEj-xKr5_9WvA)
 - 🌐 **Interactive demo**: https://phlogistic-rain.github.io/DeepPro-v2/ 
 
 ---

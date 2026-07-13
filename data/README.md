@@ -6,8 +6,8 @@ GitHub repository.
 
 ## Download
 
-1. Get the dataset archive from the Zenodo record:
-   **https://doi.org/10.5281/zenodo.21344602** (DOI: `10.5281/zenodo.21344602`).
+1. Get the dataset archive from the
+   [Zenodo record](https://zenodo.org/records/21344602?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImM2NWQ3YmMyLTdkMmEtNDFjMS1iNDlmLTYyOTQwY2FlZmYyYiIsImRhdGEiOnt9LCJyYW5kb20iOiI4YTVhNGI3OGZiMTE4NWQ4MWM2MDU4MTM3ZDk1Y2NjZiJ9.zgznyGzDRiuKhrH1wMfE68DVdpgFWpH-9pl2LoxQh7LtMRUXdJ715efByvgmlGTwHWs9MHK5AjEj-xKr5_9WvA).
 2. Extract it **here**, so the layout becomes:
 
 ```
