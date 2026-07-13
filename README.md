@@ -9,7 +9,6 @@ soft mixture‑of‑experts fusion, with an interpretable σ‑factor *grammar* 
 - 🌐 **Interactive demo**: https://phlogistic-rain.github.io/DeepPro-v2/ 
 
 ---
-![Uploading image.png…]()
 
 ## Overview
 
