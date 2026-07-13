@@ -7,7 +7,7 @@ GitHub repository.
 ## Download
 
 1. Get the dataset archive from the Zenodo record:
-   **`<ZENODO_DOI>`** (TODO: fill in the DOI/URL after minting the record).
+   **https://doi.org/10.5281/zenodo.21344602** (DOI: `10.5281/zenodo.21344602`).
 2. Extract it **here**, so the layout becomes:
 
 ```
