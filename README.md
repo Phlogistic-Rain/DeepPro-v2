@@ -1,5 +1,15 @@
 # DeepPro-v2: A Mixture-of-Experts Framework for Interpretable Prokaryotic Promoter Prediction
 
+<p align="center">
+  <a href="https://phlogistic-rain.github.io/DeepPro-v2/">
+    <img src="assets/head.png" alt="DeepPro-v2 — interactive demo" width="820">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://phlogistic-rain.github.io/DeepPro-v2/"><b>▶ Explore the interactive demo →</b></a>
+</p>
+
 DeepPro‑v2 predicts prokaryotic promoters from 81‑bp DNA sequences by
 aggregating **five** genomic language‑model backbones through a
 soft mixture‑of‑experts fusion, with an interpretable σ‑factor *grammar* branch.
