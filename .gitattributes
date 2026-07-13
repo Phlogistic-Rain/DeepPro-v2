@@ -1,0 +1,7 @@
+# Normalize line endings: text stays LF in the repo, binaries untouched
+* text=auto eol=lf
+*.png binary
+*.woff2 binary
+*.pth binary
+*.npz binary
+*.npy binary

@@ -1,0 +1,31 @@
+# DeepPro-v2 — minimal inference dependencies
+# Tested in a conda env on Windows 10:
+#   torch 2.12.0+cu132 · transformers 4.30.0 · numpy 2.2.6 · scipy 1.15.3
+#   scikit-learn 1.7.2 · pandas 2.3.3 · tqdm 4.67.3 · einops 0.8.2
+#   prokbert 0.0.48 · biopython 1.87
+#
+# ---------------------------------------------------------------------------
+# 1) PyTorch — install the build that matches YOUR CUDA/CPU from pytorch.org.
+#    (Do NOT rely on the line below on a fresh machine; pick the right wheel.)
+# torch>=2.1
+#
+# 2) HuggingFace stack. transformers is PINNED: the custom remote code of
+#    DNABERT-2 / NT-v2 / ProkBERT is validated against 4.30.x.
+transformers==4.30.0
+einops>=0.6            # required by DNABERT-2 custom modeling code
+#
+# 3) ProkBERT (the 5th backbone: base encoder only). The official package is
+#    matched to transformers 4.30. Install it WITHOUT deps so it cannot pull a
+#    conflicting torch/transformers, then add its two runtime deps separately:
+#        pip install prokbert --no-deps
+#        pip install biopython h5py
+prokbert>=0.0.48
+biopython>=1.80
+h5py
+#
+# 4) numerics / metrics / IO
+numpy>=1.24
+scipy>=1.10
+scikit-learn>=1.2
+pandas>=2.0
+tqdm>=4.60

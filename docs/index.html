@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DeepPro·v2 — Reading the grammar of the promoter</title>
+<meta name="description" content="DeepPro·v2 — a gated mixture-of-experts over five genomic foundation models coupled to a differentiable promoter grammar, for prokaryotic promoter prediction across 23 species." />
+
+<script>try{var t=localStorage.getItem('dp2-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+
+<link rel="stylesheet" href="assets/fonts/fonts.css" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<a href="#hero" class="visually-hidden" style="position:absolute;left:-9999px;">Skip to content</a>
+
+<header class="masthead" id="masthead">
+  <div class="masthead__in">
+    <a class="brand" href="#hero" aria-label="DeepPro version 2, home">
+      <svg class="brand__mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M8 3c0 4.5 8 5 8 9s-8 4.5-8 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M16 3c0 4.5-8 5-8 9s8 4.5 8 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M9.2 6.6h5.6M8.2 12h7.6M9.2 17.4h5.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>
+      </svg>
+      <strong>DeepPro<span>·v2</span></strong>
+    </a>
+    <nav class="nav" aria-label="Section navigation">
+      <a href="#abstract">Abstract</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#method">Method</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#figures">Figures</a>
+      <a href="#results">Results</a>
+    </nav>
+    <div class="mast-end">
+      <button class="theme-toggle" id="themeToggle" aria-label="Switch between light and dark theme" title="Toggle light / dark">
+        <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+        </svg>
+        <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5z"/>
+        </svg>
+      </button>
+      <span class="pill">Checkpoint&nbsp;V2</span>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false" id="navToggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="nav-drawer" id="navDrawer">
+  <a href="#abstract">Abstract</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#method">Method</a>
+  <a href="#benchmark">Benchmark</a>
+  <a href="#figures">Figures</a>
+  <a href="#results">Results</a>
+</div>
+
+<section class="hero" id="hero">
+  <div class="hero__in">
+    <span class="eyebrow hero__eyebrow">Prokaryotic promoter prediction</span>
+    <h1 class="hero__title" id="heroTitle">
+      Five genomic language experts, one <span class="em">grammar</span> of the promoter.
+    </h1>
+    <p class="hero__sub">
+      DeepPro·v2 reads a bacterial genome the way a molecular biologist does — as a
+      string over four letters, punctuated by the elements that switch transcription on.
+      An ensemble of foundation models is coupled to a differentiable
+      <span style="color:var(--fg)">promoter grammar</span> that rediscovers the −10 box on its own.
+    </p>
+    <dl class="hero__meta">
+      <div><dt>Expert backbones</dt><dd>5</dd></div>
+      <div><dt>Species covered</dt><dd>23</dd></div>
+      <div><dt>Grammar experts</dt><dd>6</dd></div>
+      <div><dt>Input window</dt><dd>81&nbsp;<small>bp</small></dd></div>
+    </dl>
+
+    <figure class="track" id="track" aria-label="An 81 base-pair prokaryotic promoter, coloured by nucleotide">
+      <div class="track__scroll">
+        <div class="track__seq" id="trackSeq" role="img" aria-hidden="true"></div>
+        <div class="track__anno" id="trackAnno"></div>
+      </div>
+    </figure>
+  </div>
+  <div class="hero__scrollcue"><span></span>scroll</div>
+</section>
+
+<section class="section abstract" id="abstract">
+  <div class="wrap">
+    <div class="section__head" data-reveal>
+      <span class="section__index">§ 00 — Abstract</span>
+      <h2 class="section__title">A new state of the art, by design.</h2>
+    </div>
+    <div class="abstract__grid">
+      <div class="abstract__body" data-reveal>
+        <p><span class="lead">Identifying promoters — the short stretches of DNA where transcription begins — is a
+          foundational problem in prokaryotic genomics.</span> DeepPro·v2 aggregates five DNA sequence
+          foundation models into a single <strong>gated mixture-of-experts</strong>, fuses their
+          representations with a learned anchor-prototype module, and attaches a
+          <strong>differentiable motif grammar</strong> that scores the −35 and −10 promoter elements directly.</p>
+        <p>On held-out test data across all 23 species, DeepPro·v2 <strong>outperforms every published baseline</strong>.
+          Beyond the leaderboard, its design is the point: a clean way to combine <strong>five complementary experts</strong>,
+          and a grammar branch that recovers canonical transcription biology from binary labels alone.</p>
+      </div>
+      <dl class="tiles" data-reveal data-delay="1" aria-label="Key figures">
+        <div class="tile" data-tone="accent"><dt class="tile__k">Test MCC (ensemble)</dt><dd class="tile__v">0.809</dd><span class="tile__n">ahead of every baseline</span></div>
+        <div class="tile" data-tone="a"><dt class="tile__k">Motif recovery</dt><dd class="tile__v">r&nbsp;0.67</dd><span class="tile__n">−10 box, unsupervised</span></div>
+        <div class="tile"><dt class="tile__k">Expert backbones</dt><dd class="tile__v">5</dd><span class="tile__n">k-mer · BPE · single-nt · prokaryote</span></div>
+        <div class="tile"><dt class="tile__k">Species</dt><dd class="tile__v">23</dd><span class="tile__n">bacteria + archaea</span></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="section arch" id="architecture">
+  <div class="wrap">
+    <div class="section__head" data-reveal>
+      <span class="section__index">§ 01 — Architecture</span>
+      <h2 class="section__title">One sequence in. A gated bank of experts, a differentiable grammar, one decision out.</h2>
+      <p class="section__lede">The input window is read in parallel by an expert bank of five pretrained genomic backbones,
+        each with its own tokenisation. Learned gating coefficients weight the five expert views into a single fused
+        representation — a <span style="color:var(--fg)">gated mixture-of-experts</span> optimised end-to-end — while a
+        differentiable grammar branch reads the −35 and −10 promoter elements straight off the one-hot sequence and
+        rejoins just before the classifier.</p>
+    </div>
+
+    <figure class="arch__figure" data-reveal aria-label="DeepPro·v2 architecture diagram">
+
+      <svg class="archdia" viewBox="0 0 1280 680" role="img" aria-labelledby="archTitle archDesc">
+        <title id="archTitle">DeepPro·v2 architecture</title>
+        <desc id="archDesc">One DNA window is read in parallel by a bank of five pretrained expert backbones. A learned soft gate assigns each expert a weight g-k; the weighted views are summed and passed through the FusionNet module. In parallel, a differentiable motif-grammar branch reads the one-hot sequence and is concatenated before a promoter / non-promoter classifier.</desc>
+        <style>
+          .archdia text { font-family: var(--f-mono); fill: var(--fg-2); }
+          .ad-col   { fill: var(--fg-3); font-size: 12.5px; letter-spacing: .24em; }
+          .ad-node  { fill: var(--ink-3); stroke: var(--line-2); stroke-width: 1.1; }
+          .ad-name  { fill: var(--fg);   font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+          .ad-sub   { fill: var(--fg-3); font-size: 12px; letter-spacing: .03em; }
+          .ad-dim   { fill: var(--accent-2); font-size: 12.5px; font-weight: 500; letter-spacing: .04em; }
+          .ad-badge { fill: var(--accent-dim); stroke: var(--accent-line); stroke-width: 1; }
+          .ad-chip  { fill: var(--ink-2); stroke: var(--line-2); stroke-width: 1; }
+          .ad-chipT { fill: var(--fg-2); font-size: 11.5px; font-weight: 600; letter-spacing: .02em; }
+          .ad-wire  { fill: none; stroke: var(--line-2); stroke-width: 1.4; }
+          .ad-wire--live { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5 8; animation: ad-march 3.6s linear infinite; }
+          .ad-wire--gram { fill: none; stroke: color-mix(in srgb, var(--base-g) 62%, var(--line-2)); stroke-width: 1.7; }
+          .ad-bankH { fill: var(--fg-3); font-size: 11.5px; letter-spacing: .22em; }
+          .ad-gtrack{ fill: var(--line-2); }
+          .ad-gfill { fill: var(--accent); }
+          .ad-sigma { fill: var(--ink-3); stroke: var(--accent-line); stroke-width: 1.8; }
+          .ad-sig   { fill: var(--fg); font-family: var(--f-display); font-size: 40px; font-weight: 400; }
+          .ad-cls   { fill: var(--accent-dim); stroke: var(--accent-line); stroke-width: 1.6; }
+          @keyframes ad-march { to { stroke-dashoffset: -260; } }
+          @media (prefers-reduced-motion: reduce) { .ad-wire--live { animation: none; } }
+        </style>
+        <defs>
+          <marker id="adArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 1 L9 5 L0 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <radialGradient id="adGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0"  stop-color="var(--accent)" stop-opacity="0.18"/>
+            <stop offset="1"  stop-color="var(--accent)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <text class="ad-col" x="106"  y="34" text-anchor="middle">INPUT</text>
+        <text class="ad-col" x="530"  y="34" text-anchor="middle">MIXTURE OF EXPERTS</text>
+        <line x1="252" y1="46" x2="812" y2="46" stroke="var(--line)" stroke-width="1"/>
+        <text class="ad-col" x="961"  y="34" text-anchor="middle">FUSION</text>
+        <text class="ad-col" x="1200" y="34" text-anchor="middle">DECISION</text>
+
+        <rect class="ad-node" x="36" y="180" width="140" height="140" rx="14"/>
+        <text class="ad-name" x="106" y="226" text-anchor="middle" style="font-size:19px">DNA</text>
+        <text class="ad-sub"  x="106" y="248" text-anchor="middle" style="letter-spacing:.06em">81 bp window</text>
+        <g>
+          <rect x="52"  y="269" width="9" height="18" rx="2" fill="var(--base-a)"/>
+          <rect x="63"  y="269" width="9" height="18" rx="2" fill="var(--base-t)"/>
+          <rect x="74"  y="269" width="9" height="18" rx="2" fill="var(--base-g)"/>
+          <rect x="85"  y="269" width="9" height="18" rx="2" fill="var(--base-c)"/>
+          <rect x="96"  y="269" width="9" height="18" rx="2" fill="var(--base-a)"/>
+          <rect x="107" y="269" width="9" height="18" rx="2" fill="var(--base-t)"/>
+          <rect x="118" y="269" width="9" height="18" rx="2" fill="var(--base-t)"/>
+          <rect x="129" y="269" width="9" height="18" rx="2" fill="var(--base-a)"/>
+          <rect x="140" y="269" width="9" height="18" rx="2" fill="var(--base-a)"/>
+          <rect x="151" y="269" width="9" height="18" rx="2" fill="var(--base-t)"/>
+        </g>
+
+        <rect x="226" y="58" width="450" height="361" rx="18"
+              fill="color-mix(in srgb, var(--accent) 4%, var(--ink-2))" stroke="var(--line)" stroke-width="1"/>
+        <text class="ad-bankH" x="244" y="88">EXPERT&#160;BANK</text>
+        <text class="ad-bankH" x="658" y="88" text-anchor="end" style="fill:var(--accent-2);letter-spacing:.14em">N&#160;=&#160;5</text>
+        <line x1="244" y1="99" x2="658" y2="99" stroke="var(--line)" stroke-width="1"/>
+
+        <g class="ad-expert">
+          <rect class="ad-node" x="244" y="103" width="416" height="46" rx="10"/>
+          <rect class="ad-chip" x="256" y="115" width="22" height="22" rx="7"/>
+          <text class="ad-chipT" x="267" y="129.5" text-anchor="middle">E1</text>
+          <text class="ad-name" x="290" y="122" style="font-size:16px">DNABERT · 3-mer</text>
+          <text class="ad-sub"  x="290" y="139">k-mer language model</text>
+          <rect class="ad-badge" x="594" y="115" width="54" height="22" rx="11"/>
+          <text class="ad-dim"   x="621" y="129.5" text-anchor="middle">768</text>
+        </g>
+
+        <g class="ad-expert">
+          <rect class="ad-node" x="244" y="165" width="416" height="46" rx="10"/>
+          <rect class="ad-chip" x="256" y="177" width="22" height="22" rx="7"/>
+          <text class="ad-chipT" x="267" y="191.5" text-anchor="middle">E2</text>
+          <text class="ad-name" x="290" y="184" style="font-size:16px">DNABERT · 6-mer</text>
+          <text class="ad-sub"  x="290" y="201">k-mer language model</text>
+          <rect class="ad-badge" x="594" y="177" width="54" height="22" rx="11"/>
+          <text class="ad-dim"   x="621" y="191.5" text-anchor="middle">768</text>
+        </g>
+
+        <g class="ad-expert">
+          <rect class="ad-node" x="244" y="227" width="416" height="46" rx="10"/>
+          <rect class="ad-chip" x="256" y="239" width="22" height="22" rx="7"/>
+          <text class="ad-chipT" x="267" y="253.5" text-anchor="middle">E3</text>
+          <text class="ad-name" x="290" y="246" style="font-size:16px">DNABERT-2</text>
+          <text class="ad-sub"  x="290" y="263">byte-pair tokeniser</text>
+          <rect class="ad-badge" x="594" y="239" width="54" height="22" rx="11"/>
+          <text class="ad-dim"   x="621" y="253.5" text-anchor="middle">768</text>
+        </g>
+
+        <g class="ad-expert">
+          <rect class="ad-node" x="244" y="289" width="416" height="46" rx="10"/>
+          <rect class="ad-chip" x="256" y="301" width="22" height="22" rx="7"/>
+          <text class="ad-chipT" x="267" y="315.5" text-anchor="middle">E4</text>
+          <text class="ad-name" x="290" y="308" style="font-size:16px">NT-v2</text>
+          <text class="ad-sub"  x="290" y="325">Nucleotide Transformer · 50M</text>
+          <rect class="ad-badge" x="594" y="301" width="54" height="22" rx="11"/>
+          <text class="ad-dim"   x="621" y="315.5" text-anchor="middle">512</text>
+        </g>
+
+        <g class="ad-expert">
+          <rect class="ad-node" x="244" y="351" width="416" height="46" rx="10"/>
+          <rect class="ad-chip" x="256" y="363" width="22" height="22" rx="7"/>
+          <text class="ad-chipT" x="267" y="377.5" text-anchor="middle">E5</text>
+          <text class="ad-name" x="290" y="370" style="font-size:16px">ProkBERT-mini-c</text>
+          <text class="ad-sub"  x="290" y="387">prokaryote-native model</text>
+          <rect class="ad-badge" x="594" y="363" width="54" height="22" rx="11"/>
+          <text class="ad-dim"   x="621" y="377.5" text-anchor="middle">384</text>
+        </g>
+
+        <path class="ad-wire" d="M176 250 C 208 250 208 126 244 126" marker-end="url(#adArrow)"/>
+        <path class="ad-wire" d="M176 250 C 208 250 208 188 244 188" marker-end="url(#adArrow)"/>
+        <path class="ad-wire--live" d="M176 250 L 244 250" marker-end="url(#adArrow)"/>
+        <path class="ad-wire" d="M176 250 C 208 250 208 312 244 312" marker-end="url(#adArrow)"/>
+        <path class="ad-wire" d="M176 250 C 208 250 208 374 244 374" marker-end="url(#adArrow)"/>
+
+        <g>
+          <rect class="ad-gtrack" x="688" y="122" width="44" height="8" rx="4"/><rect class="ad-gfill" x="688" y="122" width="37.5" height="8" rx="4"/>
+          <rect class="ad-gtrack" x="688" y="184" width="44" height="8" rx="4"/><rect class="ad-gfill" x="688" y="184" width="37.5" height="8" rx="4"/>
+          <rect class="ad-gtrack" x="688" y="246" width="44" height="8" rx="4"/><rect class="ad-gfill" x="688" y="246" width="38.8" height="8" rx="4"/>
+          <rect class="ad-gtrack" x="688" y="308" width="44" height="8" rx="4"/><rect class="ad-gfill" x="688" y="308" width="40" height="8" rx="4"/>
+          <rect class="ad-gtrack" x="688" y="370" width="44" height="8" rx="4"/><rect class="ad-gfill" x="688" y="370" width="39.8" height="8" rx="4"/>
+        </g>
+        <text class="ad-bankH" x="710" y="401" text-anchor="middle" style="fill:var(--accent-2);letter-spacing:.14em">SOFT&#160;GATE</text>
+        <text class="ad-sub"   x="710" y="418" text-anchor="middle" style="letter-spacing:.05em">g&#8341; softmax · Σ = 1</text>
+
+        <path class="ad-wire" d="M660 126 L 688 126"/>
+        <path class="ad-wire" d="M660 188 L 688 188"/>
+        <path class="ad-wire--live" d="M660 250 L 688 250"/>
+        <path class="ad-wire" d="M660 312 L 688 312"/>
+        <path class="ad-wire" d="M660 374 L 688 374"/>
+
+        <text class="ad-bankH" x="792" y="186" text-anchor="middle">WEIGHTED&#160;SUM</text>
+        <circle cx="792" cy="250" r="62" fill="url(#adGlow)"/>
+        <circle class="ad-sigma" cx="792" cy="250" r="42"/>
+        <text class="ad-sig" x="792" y="265" text-anchor="middle">Σ</text>
+        <text class="ad-sub" x="792" y="314" text-anchor="middle">g&#8341;·v&#8341;</text>
+
+        <path class="ad-wire" d="M732 126 C 766 126 756 224 758 226"/>
+        <path class="ad-wire" d="M732 188 C 758 188 746 236 752 238"/>
+        <path class="ad-wire--live" d="M732 250 L 750 250"/>
+        <path class="ad-wire" d="M732 312 C 758 312 746 264 752 262"/>
+        <path class="ad-wire" d="M732 374 C 766 374 756 276 758 274"/>
+
+        <rect class="ad-node" x="876" y="184" width="170" height="132" rx="15"/>
+        <text class="ad-name" x="961" y="219" text-anchor="middle" style="font-size:17px">FusionNet</text>
+        <text class="ad-sub"  x="961" y="243" text-anchor="middle">anchor prototype</text>
+        <text class="ad-sub"  x="961" y="262" text-anchor="middle">+ decoder reconstruction</text>
+        <text class="ad-dim"  x="961" y="291" text-anchor="middle">representation · 128</text>
+        <path class="ad-wire--live" d="M834 250 L 876 250" marker-end="url(#adArrow)"/>
+
+        <rect class="ad-node" x="226" y="520" width="450" height="120" rx="15" style="stroke:color-mix(in srgb, var(--base-g) 48%, transparent)"/>
+        <text class="ad-name" x="244" y="553" style="fill:var(--base-g);font-size:17px">Motif grammar</text>
+        <text class="ad-sub"  x="244" y="577">−35 PWM · spacer · −10 PWM</text>
+        <text class="ad-sub"  x="244" y="597">K = 6 differentiable experts</text>
+        <text class="ad-sub"  x="244" y="617" style="fill:var(--fg-2)">reads promoter syntax directly</text>
+
+        <g transform="translate(514,542)">
+          <rect x="0"  y="36" width="9" height="26" rx="1.5" fill="var(--base-t)"/>
+          <rect x="14" y="24" width="9" height="38" rx="1.5" fill="var(--base-a)"/>
+          <rect x="28" y="12" width="9" height="50" rx="1.5" fill="var(--base-t)"/>
+          <rect x="42" y="12" width="9" height="50" rx="1.5" fill="var(--base-a)"/>
+          <rect x="56" y="24" width="9" height="38" rx="1.5" fill="var(--base-a)"/>
+          <rect x="70" y="36" width="9" height="26" rx="1.5" fill="var(--base-t)"/>
+          <line x1="-2" y1="64" x2="81" y2="64" stroke="var(--line-2)" stroke-width="1"/>
+        </g>
+        <rect class="ad-badge" x="600" y="568" width="60" height="24" rx="12" style="fill:color-mix(in srgb, var(--base-g) 12%, transparent);stroke:color-mix(in srgb, var(--base-g) 40%, transparent)"/>
+        <text x="630" y="584.5" text-anchor="middle" style="font-family:var(--f-mono);font-size:12.5px;letter-spacing:.04em;fill:var(--base-g);font-weight:500">m · 64</text>
+
+        <path class="ad-wire--gram" d="M106 320 C 106 470 150 580 226 580" marker-end="url(#adArrow)"/>
+        <text class="ad-sub" x="124" y="452">one-hot</text>
+
+        <rect class="ad-node" x="1082" y="236" width="28" height="358" rx="13"/>
+        <text class="ad-bankH" x="1096" y="419" text-anchor="middle" transform="rotate(-90 1096 415)" style="letter-spacing:.16em">CONCAT</text>
+        <text class="ad-dim" x="1096" y="228" text-anchor="middle">d · 192</text>
+        <path class="ad-wire--live" d="M1046 250 L 1082 250" marker-end="url(#adArrow)"/>
+        <path class="ad-wire--gram" d="M676 580 L 1082 580" marker-end="url(#adArrow)"/>
+
+        <path class="ad-wire--live" d="M1110 415 L 1142 415" marker-end="url(#adArrow)"/>
+        <rect class="ad-cls" x="1142" y="352" width="116" height="126" rx="16"/>
+        <text class="ad-name" x="1200" y="388" text-anchor="middle" style="fill:var(--accent-2);font-size:17px">Classifier</text>
+        <circle cx="1162" cy="420" r="4" fill="var(--base-a)"/>
+        <text x="1174" y="424" style="font-family:var(--f-mono);font-size:11px;fill:var(--fg)">promoter</text>
+        <circle cx="1162" cy="448" r="4" fill="var(--line-strong)"/>
+        <text class="ad-sub" x="1174" y="452" style="font-size:11px">non-promoter</text>
+      </svg>
+    </figure>
+
+    <div class="arch__legend" data-reveal>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--base-a)"></span>Adenine</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--base-c)"></span>Cytosine</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--base-g)"></span>Guanine</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--base-t)"></span>Thymine</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--accent)"></span>Expert flow · gate · fusion</span>
+      <span class="legend-item"><span class="legend-swatch" style="background:var(--base-g)"></span>Grammar bypass</span>
+    </div>
+    <p class="arch__caption" data-reveal>Bar length beside each expert encodes its learned gating coefficient g<sub>k</sub> — a
+      softmax over the expert bank that sums to one. These coefficients are <b>optimised end-to-end</b> with the rest of the
+      network, blending the five complementary experts into a single fused representation rather than combining them by hand.</p>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<section class="section method" id="method">
+  <div class="wrap">
+    <div class="section__head" data-reveal>
+      <span class="section__index">§ 02 — Method</span>
+      <h2 class="section__title">Three additions, built on a stable core.</h2>
+      <p class="section__lede">V2 extends a proven fusion core with three deliberate additions — a fifth expert,
+        a differentiable grammar, and a learned gate.</p>
+    </div>
+
+    <ol class="method__list">
+      <li class="enh" data-reveal>
+        <span class="enh__num">01</span>
+        <div>
+          <h3 class="enh__title">A fifth expert, matched to the domain</h3>
+          <span class="enh__tag">ProkBERT-mini-c · +384-d view</span>
+          <p class="enh__desc">The four backbones are joined by a fifth, chosen to close a gap: a
+            <b>prokaryote-native, character-level language model</b> pretrained directly on bacterial and archaeal
+            genomes — the expert whose training domain sits closest to the task.</p>
+        </div>
+        <svg class="enh__glyph" viewBox="0 0 92 92" fill="none" aria-hidden="true">
+          <circle cx="46" cy="46" r="30" stroke="var(--accent-line)" stroke-width="1.4"/>
+          <circle cx="46" cy="16" r="4.5" fill="var(--accent)"/>
+          <circle cx="72" cy="46" r="3.5" fill="var(--line-strong)"/><circle cx="20" cy="46" r="3.5" fill="var(--line-strong)"/>
+          <circle cx="46" cy="76" r="3.5" fill="var(--line-strong)"/><circle cx="46" cy="46" r="3.5" fill="var(--line-strong)"/>
+        </svg>
+      </li>
+
+      <li class="enh" data-reveal>
+        <span class="enh__num">02</span>
+        <div>
+          <h3 class="enh__title">A differentiable promoter grammar, on a bypass</h3>
+          <span class="enh__tag">−35 · spacer · −10  →  m·64</span>
+          <p class="enh__desc">A parallel branch reads the raw one-hot sequence through six differentiable experts, each a
+            position-anchored grammar of <b>−35 and −10 motifs</b>. Its vector concatenates onto the fused representation —
+            keeping the ensemble's story clean while adding an <b>interpretable, biology-shaped</b> signal.</p>
+        </div>
+        <svg class="enh__glyph" viewBox="0 0 92 92" fill="none" aria-hidden="true">
+          <rect x="10" y="40" width="16" height="30" fill="var(--base-g)" opacity=".85"/>
+          <rect x="30" y="26" width="16" height="44" fill="var(--base-t)" opacity=".85"/>
+          <rect x="50" y="14" width="16" height="56" fill="var(--base-a)"/>
+          <rect x="70" y="48" width="14" height="22" fill="var(--base-c)" opacity=".85"/>
+          <line x1="8" y1="72" x2="86" y2="72" stroke="var(--line-2)"/>
+        </svg>
+      </li>
+
+      <li class="enh" data-reveal>
+        <span class="enh__num">03</span>
+        <div>
+          <h3 class="enh__title">Fusion as a gated mixture-of-experts</h3>
+          <span class="enh__tag">Σ gₖ·vₖ · learned gating</span>
+          <p class="enh__desc">Fusion is cast as a <b>gated mixture-of-experts</b>: learned gating coefficients weight the five
+            expert views, mean-initialised and regularised for stability, so the blend is <b>optimised end-to-end</b> rather
+            than fixed by hand.</p>
+        </div>
+        <svg class="enh__glyph" viewBox="0 0 92 92" fill="none" aria-hidden="true">
+          <path d="M14 20h64M14 36h64M14 52h48M14 68h30" stroke="var(--line-strong)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 20h40" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 52h48" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<section class="section benchmark" id="benchmark">
+  <div class="wrap">
+    <div class="section__head" data-reveal>
+      <span class="section__index">§ 03 — Benchmark</span>
+      <h2 class="section__title">The whole benchmark, genome by genome.</h2>
+      <p class="section__lede">Every method on this page is trained and scored on one shared benchmark:
+        321,858 labelled 81-bp windows across 23 prokaryotic genomes — 21 bacteria and 2 archaea.
+        Below is the complete roster, sorted from largest to smallest.</p>
+    </div>
+
+    <dl class="tiles tiles--band" data-reveal aria-label="Benchmark at a glance">
+      <div class="tile"><dt class="tile__k">Genomes</dt><dd class="tile__v">23</dd><span class="tile__n">21 bacteria + 2 archaea</span></div>
+      <div class="tile" data-tone="accent"><dt class="tile__k">Labelled windows</dt><dd class="tile__v">321,858</dd><span class="tile__n">257,484 train / 64,374 test</span></div>
+      <div class="tile"><dt class="tile__k">Window length</dt><dd class="tile__v">81&nbsp;<small>bp</small></dd><span class="tile__n">100% exactly 81 bp</span></div>
+      <div class="tile" data-tone="a"><dt class="tile__k">Class ratio</dt><dd class="tile__v">1&nbsp;:&nbsp;2</dd><span class="tile__n">promoter : background · 33.3%</span></div>
+      <div class="tile"><dt class="tile__k">Evaluation</dt><dd class="tile__v">5-fold</dd><span class="tile__n">+ held-out test per genome</span></div>
+    </dl>
+
+    <div class="roster-head" data-reveal>
+      <span class="eyebrow">Windows per genome</span>
+      <span class="roster-range">1,989 → 44,337 · a 22× spread</span>
+    </div>
+
+    <div class="roster" data-reveal>
+      <div class="roster__head">
+        <span>Organism</span><span class="roster__sizeh">Relative size</span><span class="roster__valh">Windows</span>
+      </div>
+      <div class="roster__row"><span class="roster__name">Bradyrhizobium japonicum <span class="strain">USDA 110</span></span><span class="roster__track"><i style="width:100.0%"></i></span><span class="roster__val">44,337</span></div>
+      <div class="roster__row"><span class="roster__name">Sinorhizobium meliloti <span class="strain">1021</span></span><span class="roster__track"><i style="width:98.0%"></i></span><span class="roster__val">43,446</span></div>
+      <div class="roster__row"><span class="roster__name">Nostoc <span class="strain">sp. PCC 7120</span></span><span class="roster__track"><i style="width:85.0%"></i></span><span class="roster__val">37,680</span></div>
+      <div class="roster__row"><span class="roster__name">Shigella flexneri <span class="strain">5a M90T</span></span><span class="roster__track"><i style="width:66.0%"></i></span><span class="roster__val">29,280</span></div>
+      <div class="roster__row"><span class="roster__name">Burkholderia cenocepacia <span class="strain">J2315</span></span><span class="roster__track"><i style="width:65.4%"></i></span><span class="roster__val">28,989</span></div>
+      <div class="roster__row"><span class="roster__name">Pseudomonas putida <span class="strain">KT2440</span></span><span class="roster__track"><i style="width:46.6%"></i></span><span class="roster__val">20,643</span></div>
+      <div class="roster__row"><span class="roster__name">Escherichia coli <span class="strain">K-12 MG1655</span></span><span class="roster__track"><i style="width:42.2%"></i></span><span class="roster__val">18,690</span></div>
+      <div class="roster__row" data-domain="archaea"><span class="roster__name">Haloferax volcanii <span class="strain">DS2</span> <span class="roster__tag">Archaea</span></span><span class="roster__track"><i style="width:29.7%"></i></span><span class="roster__val">13,182</span></div>
+      <div class="roster__row"><span class="roster__name">Corynebacterium glutamicum <span class="strain">ATCC 13032</span></span><span class="roster__track"><i style="width:20.5%"></i></span><span class="roster__val">9,093</span></div>
+      <div class="roster__row"><span class="roster__name">Xanthomonas campestris <span class="strain">pv. campestris B100</span></span><span class="roster__track"><i style="width:20.0%"></i></span><span class="roster__val">8,889</span></div>
+      <div class="roster__row" data-domain="archaea"><span class="roster__name">Thermococcus kodakarensis <span class="strain">KOD1</span> <span class="roster__tag">Archaea</span></span><span class="roster__track"><i style="width:16.3%"></i></span><span class="roster__val">7,239</span></div>
+      <div class="roster__row"><span class="roster__name">Paenibacillus riograndensis <span class="strain">SBR5</span></span><span class="roster__track"><i style="width:15.4%"></i></span><span class="roster__val">6,828</span></div>
+      <div class="roster__row"><span class="roster__name">Helicobacter pylori <span class="strain">26695</span></span><span class="roster__track"><i style="width:14.0%"></i></span><span class="roster__val">6,186</span></div>
+      <div class="roster__row"><span class="roster__name">Campylobacter jejuni <span class="strain">RM1221</span></span><span class="roster__track"><i style="width:13.5%"></i></span><span class="roster__val">5,985</span></div>
+      <div class="roster__row"><span class="roster__name">Staphylococcus aureus <span class="strain">MW2</span></span><span class="roster__track"><i style="width:13.3%"></i></span><span class="roster__val">5,907</span></div>
+      <div class="roster__row"><span class="roster__name">Campylobacter jejuni <span class="strain">81-176</span></span><span class="roster__track"><i style="width:13.2%"></i></span><span class="roster__val">5,832</span></div>
+      <div class="roster__row"><span class="roster__name">Campylobacter jejuni <span class="strain">81116</span></span><span class="roster__track"><i style="width:12.1%"></i></span><span class="roster__val">5,370</span></div>
+      <div class="roster__row"><span class="roster__name">Campylobacter jejuni <span class="strain">NCTC 11168</span></span><span class="roster__track"><i style="width:11.8%"></i></span><span class="roster__val">5,235</span></div>
+      <div class="roster__row"><span class="roster__name">Staphylococcus epidermidis <span class="strain">ATCC 12228</span></span><span class="roster__track"><i style="width:11.1%"></i></span><span class="roster__val">4,941</span></div>
+      <div class="roster__row"><span class="roster__name">Corynebacterium diphtheriae <span class="strain">NCTC 13129</span></span><span class="roster__track"><i style="width:10.3%"></i></span><span class="roster__val">4,554</span></div>
+      <div class="roster__row"><span class="roster__name">Synechococcus elongatus <span class="strain">PCC 7942</span></span><span class="roster__track"><i style="width:9.5%"></i></span><span class="roster__val">4,230</span></div>
+      <div class="roster__row"><span class="roster__name">Acinetobacter baumannii <span class="strain">ATCC 17978</span></span><span class="roster__track"><i style="width:7.5%"></i></span><span class="roster__val">3,333</span></div>
+      <div class="roster__row"><span class="roster__name">Bacillus subtilis <span class="strain">168</span></span><span class="roster__track"><i style="width:4.5%"></i></span><span class="roster__val">1,989</span></div>
+    </div>
+    <p class="roster__axis" data-reveal>Bar length ∝ window count · longest = <i>Bradyrhizobium japonicum</i> USDA 110, 44,337 · shortest = <i>Bacillus subtilis</i> 168, 1,989 — a 22× range.</p>
+
+    <div class="bench__notes" data-reveal>
+      <div class="callout">
+        <span class="callout__k">Evaluation protocol</span>
+        <p>Five-fold cross-validation on each genome's training pool, plus a separate held-out test set per
+          genome. The final prediction is an ensemble vote across the five folds, and every genome trains its own model.</p>
+      </div>
+      <div class="callout">
+        <span class="callout__k">Stage-0 pre-training · TAPT</span>
+        <p>Backbone pre-training runs on a separate merged 23-genome corpus — 227,089 train / 25,512 val /
+          64,122 test windows (cleaned) — kept apart from the per-genome benchmark scored above.</p>
+      </div>
+    </div>
+
+    <div class="honesty" data-reveal>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" stroke="var(--fg-3)"/><path d="M8 4.5v4.5M8 11.2v.1" stroke="var(--fg-3)" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span>Window counts are per-genome totals (train + test) and sum exactly to 321,858. The Stage-0
+        corpus is a separate cleaned split, not part of the per-genome evaluation.</span>
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<section class="section figures" id="figures">
+  <div class="wrap">
+    <div class="section__head" data-reveal>
+      <span class="section__index">§ 04 — Figures</span>
+      <h2 class="section__title">The analysis, act by act.</h2>
+      <p class="section__lede">Eleven analyses in four acts — <b>does it work</b>, <b>why it works</b>, <b>what grammar it
+        reads</b>, and <b>what it means</b>. Five are main figures, six extended data. Choose an act, or open any
+        panel to read it full-size.</p>
+      <div class="figures__meta" role="group" aria-label="Filter figures by act">
+        <button class="filter is-on" data-filter="all">All</button>
+        <button class="filter" data-filter="efficacy">Efficacy</button>
+        <button class="filter" data-filter="mechanism">Mechanism</button>
+        <button class="filter" data-filter="grammar">Grammar</button>
+        <button class="filter" data-filter="meaning">Meaning</button>
+      </div>
+    </div>
+
+    <div class="gallery" id="gallery">
+
+      <article class="fig-card fig-card--feature" data-reveal data-act="efficacy"
+               data-full="assets/figV2/01.performance/fig_performance.png" data-fig="FIG · 2" data-kind="main">
+        <button class="fig-card__hit" aria-label="Open Figure 2 — State of the art across 23 genomes"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/01.performance/fig_performance.png" alt="Per-species MCC heatmap across 23 prokaryotes with a seven-metric bar chart and an average-MCC ranking" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">FIG · 2 · performance</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 01.performance</span>
+          <h3 class="fig-card__title">State of the art across 23 genomes</h3>
+          <p class="fig-card__find">Mean test MCC <b>0.809</b> — first on six of seven metrics and ahead of every published baseline. The per-genome grid shows the whole field, method by method.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="main">FIG · 2</span><span class="act-tag">Efficacy</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card" data-reveal data-act="efficacy"
+               data-full="assets/figV2/02.roc_pr_calibration/fig_roc_pr.png" data-fig="ED · 1" data-kind="ed">
+        <button class="fig-card__hit" aria-label="Open Extended Data 1 — Threshold-free and calibrated"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/02.roc_pr_calibration/fig_roc_pr.png" alt="ROC and precision–recall curves with reliability calibration diagrams" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">ED · 1 · roc_pr</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 02.roc_pr_calibration</span>
+          <h3 class="fig-card__title">Threshold-free and calibrated</h3>
+          <p class="fig-card__find">Macro AUROC <b>0.954</b> and a raw ECE of <b>0.025</b> — the lead holds at every threshold, and the probabilities mean what they say.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="ed">ED · 1</span><span class="act-tag">Efficacy</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card" data-reveal data-act="efficacy"
+               data-full="assets/figV2/03.statistical_significance/fig_significance.png" data-fig="ED · 2" data-kind="ed">
+        <button class="fig-card__hit" aria-label="Open Extended Data 2 — A lead that survives testing"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/03.statistical_significance/fig_significance.png" alt="Friedman–Nemenyi critical-difference diagram and pairwise Wilcoxon significance matrix" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">ED · 2 · significance</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 03.statistical_significance</span>
+          <h3 class="fig-card__title">A lead that survives testing</h3>
+          <p class="fig-card__find">Friedman ranks DeepPro·v2 first (P = 3.6×10⁻²²); a paired Wilcoxon test confirms it beats the strongest baseline on <b>19 of 23</b> genomes.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="ed">ED · 2</span><span class="act-tag">Efficacy</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card fig-card--feature" data-reveal data-act="mechanism"
+               data-full="assets/figV2/04.expert_complementarity/fig_expert_complementarity.png" data-fig="FIG · 3" data-kind="main">
+        <button class="fig-card__hit" aria-label="Open Figure 3 — Five experts, five different views"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/04.expert_complementarity/fig_expert_complementarity.png" alt="Per-expert probe AUROC heatmap, fusion-versus-experts bars, complementarity headroom and a prediction-disagreement matrix" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">FIG · 3 · experts</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 04.expert_complementarity</span>
+          <h3 class="fig-card__title">Five experts, five different views</h3>
+          <p class="fig-card__find">Each backbone encodes a distinct, non-redundant read of the sequence — and the fused probe (AUROC <b>0.948</b>) beats every expert on its own.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="main">FIG · 3</span><span class="act-tag">Mechanism</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card fig-card--wide" data-reveal data-act="mechanism"
+               data-full="assets/figV2/06.representation_umap/fig_representation_umap.png" data-fig="ED · 4" data-kind="ed">
+        <button class="fig-card__hit" aria-label="Open Extended Data 4 — Promoters, linearly separable"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/06.representation_umap/fig_representation_umap.png" alt="UMAP projections of the fused representation separating promoter from background across species" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">ED · 4 · umap</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 06.representation_umap</span>
+          <h3 class="fig-card__title">Promoters, linearly separable</h3>
+          <p class="fig-card__find">Species by species, the fused representation splits promoter from background (mean AUROC <b>0.943</b>, above the best single view) — and separability tracks MCC at ρ = 0.89.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="ed">ED · 4</span><span class="act-tag">Mechanism</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card fig-card--wide" data-reveal data-act="grammar"
+               data-full="assets/figV2/05.motif_grammar/fig_motif_grammar.png" data-fig="FIG · 4" data-kind="main"
+               data-scope="A standalone probe of what the grammar branch can learn from labels alone — not a claim about the deployed ensemble's internal weights.">
+        <button class="fig-card__hit" aria-label="Open Figure 4 — The −10 box, rediscovered"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/05.motif_grammar/fig_motif_grammar.png" alt="Sequence logos of grammar experts recovering the −10 TATAAT box, with a label-shuffle control" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">FIG · 4 · motif_grammar</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 05.motif_grammar</span>
+          <h3 class="fig-card__title">The −10 box, rediscovered</h3>
+          <p class="fig-card__find">From binary labels alone, the grammar experts grow the canonical σ⁷⁰ −10 element (TATAAT) — best match <b>r = 0.67</b>, well past a label-shuffle null.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="main">FIG · 4</span><span class="act-tag">Grammar</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card" data-reveal data-act="grammar"
+               data-full="assets/figV2/05b.model_attribution_ism/fig_model_attribution_ism.png" data-fig="ED · 3a" data-kind="ed"
+               data-scope="Read out from the foundation-model experts by in-silico mutagenesis of the deployed ensemble — not from a deployment grammar PWM.">
+        <button class="fig-card__hit" aria-label="Open Extended Data 3a — The deployed model reads the same box"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/05b.model_attribution_ism/fig_model_attribution_ism.png" alt="In-silico mutagenesis saliency profile peaking at the −10 box and the +1 start site" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">ED · 3a · ism</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 05b.model_attribution_ism</span>
+          <h3 class="fig-card__title">The deployed model reads the same box</h3>
+          <p class="fig-card__find">In-silico mutagenesis of the full ensemble peaks at −10 and the +1 start; its saliency tracks the data's own information profile at <b>r = 0.82</b>.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="ed">ED · 3a</span><span class="act-tag">Grammar</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card" data-reveal data-act="grammar"
+               data-full="assets/figV2/05c.sequence_motif/fig_sequence_motif.png" data-fig="ED · 3b" data-kind="ed">
+        <button class="fig-card__hit" aria-label="Open Extended Data 3b — The biology, straight from the sequence"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/05c.sequence_motif/fig_sequence_motif.png" alt="Two-sample sequence logo, positional information profile and a 23-species conservation heatmap including the archaeal TATA-box" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">ED · 3b · sequence_motif</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 05c.sequence_motif</span>
+          <h3 class="fig-card__title">The biology, straight from the sequence</h3>
+          <p class="fig-card__find">Pure base statistics recover the σ⁷⁰ −10 / −35 / +1 elements across bacteria — and the <b>archaeal TATA-box</b> near −25 in <i>H. volcanii</i> and <i>T. kodakarensis</i>.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="ed">ED · 3b</span><span class="act-tag">Grammar</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card" data-reveal data-act="meaning"
+               data-full="assets/figV2/07.promoter_diversity/fig_promoter_diversity.png" data-fig="ED · 5" data-kind="ed">
+        <button class="fig-card__hit" aria-label="Open Extended Data 5 — Diversity predicts difficulty"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/07.promoter_diversity/fig_promoter_diversity.png" alt="Scatter relating a genome's promoter-repertoire diversity to representation separability" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">ED · 5 · diversity</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 07.promoter_diversity</span>
+          <h3 class="fig-card__title">Diversity predicts difficulty</h3>
+          <p class="fig-card__find">The more diverse a genome's promoter repertoire, the harder it is: separability falls with diversity (ρ = <b>−0.59</b>), even after controlling for set size.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="ed">ED · 5</span><span class="act-tag">Meaning</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card" data-reveal data-act="meaning"
+               data-full="assets/figV2/08.error_analysis/fig_error_analysis.png" data-fig="ED · 6" data-kind="ed">
+        <button class="fig-card__hit" aria-label="Open Extended Data 6 — Errors that fail safe"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/08.error_analysis/fig_error_analysis.png" alt="Error decomposition and risk–coverage curves for the residual mistakes" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">ED · 6 · error</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 08.error_analysis</span>
+          <h3 class="fig-card__title">Errors that fail safe</h3>
+          <p class="fig-card__find">Residual mistakes are mostly low-confidence false negatives, concentrated in the most diverse genomes; risk–coverage AURC is the lowest in the field (<b>3.94</b>).</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="ed">ED · 6</span><span class="act-tag">Meaning</span></div>
+        </div>
+      </article>
+
+      <article class="fig-card fig-card--feature" data-reveal data-act="meaning"
+               data-full="assets/figV2/09.cross_species/fig_cross_species_heatmaps.png" data-fig="FIG · 5" data-kind="main"
+               data-scope="Non-zero-shot: every model shares the same Stage-0 pre-trained backbones, so transfer is measured on top of shared representations.">
+        <button class="fig-card__hit" aria-label="Open Figure 5 — Transfer maps phylogeny"></button>
+        <div class="fig-card__frame">
+          <img src="assets/figV2/09.cross_species/fig_cross_species_heatmaps.png" alt="Two 23×23 cross-species transfer matrices, ordered by genome tree and by promoter-k-mer tree" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/>
+          <div class="fig-ph" style="display:none"><span class="fig-ph__badge">FIG · 5 · cross_species</span></div>
+          <span class="fig-card__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>
+        </div>
+        <div class="fig-card__body">
+          <span class="fig-card__slug">figV2 / 09.cross_species</span>
+          <h3 class="fig-card__title">Transfer maps phylogeny</h3>
+          <p class="fig-card__find">A 23×23 transfer matrix: promoter grammar is organism-specific, decaying with evolutionary distance (Mantel r = <b>−0.20</b>). Non-zero-shot — the backbones are shared.</p>
+          <div class="fig-card__foot"><span class="fig-tag" data-kind="main">FIG · 5</span><span class="act-tag">Meaning</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<section class="section results" id="results">
+  <div class="wrap">
+    <div class="section__head" data-reveal>
+      <span class="section__index">§ 05 — Results</span>
+      <h2 class="section__title">Measured against the whole field.</h2>
+      <p class="section__lede">Nine promoter predictors on the same 23-species held-out benchmark. Four baselines were
+        re-trained from scratch and scored under our identical five-fold ensemble protocol; four more are quoted
+        directly from their original papers. Rows are ordered by MCC.</p>
+    </div>
+
+    <div class="results__wrap" data-reveal>
+      <table class="res res--full">
+        <caption class="visually-hidden">Mean test-set performance across 23 prokaryotic species. DeepPro·v2 compared against eight baseline promoter predictors on seven metrics.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Method</th>
+            <th scope="col">ACC</th>
+            <th scope="col">Sn</th>
+            <th scope="col">Sp</th>
+            <th scope="col">Pre</th>
+            <th scope="col">F1</th>
+            <th scope="col" class="col-mcc">MCC</th>
+            <th scope="col">AUROC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="is-ours">
+            <td><span class="m"><span class="m__name">DeepPro·v2</span><span class="src src--ours">This work</span></span></td>
+            <td class="best">0.917</td><td class="best">0.837</td><td class="best">0.957</td><td class="best">0.902</td><td class="best">0.866</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:80.9%"></i></span><b class="best">0.809</b></span></td>
+            <td class="best">0.954</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">msBERT-Promoter</span><span class="src src--repro">Reproduced</span></span></td>
+            <td>0.903</td><td>0.794</td><td class="best">0.957</td><td>0.860</td><td>0.823</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:76.7%"></i></span><b>0.767</b></span></td>
+            <td>0.944</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">iPro-MP</span><span class="src src--cited">Reported</span></span></td>
+            <td>0.890</td><td>0.834</td><td>0.918</td><td class="na">—</td><td>0.832</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:75.2%"></i></span><b>0.752</b></span></td>
+            <td>0.935</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">DNABERT2-CAMP</span><span class="src src--repro">Reproduced</span></span></td>
+            <td>0.855</td><td>0.762</td><td>0.902</td><td>0.795</td><td>0.777</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:67.1%"></i></span><b>0.671</b></span></td>
+            <td>0.912</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">Prompt</span><span class="src src--cited">Reported</span></span></td>
+            <td>0.788</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td>0.737</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:61.1%"></i></span><b>0.611</b></span></td>
+            <td>0.835</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">iPro-WAEL</span><span class="src src--cited">Reported</span></span></td>
+            <td>0.798</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td>0.747</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:60.6%"></i></span><b>0.606</b></span></td>
+            <td>0.838</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">HyenaDNA</span><span class="src src--repro">Reproduced</span></span></td>
+            <td>0.832</td><td>0.662</td><td>0.918</td><td>0.784</td><td>0.712</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:60.5%"></i></span><b>0.605</b></span></td>
+            <td>0.867</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">PromoterLCNN</span><span class="src src--cited">Reported</span></span></td>
+            <td>0.755</td><td class="na">—</td><td class="na">—</td><td class="na">—</td><td>0.706</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:56.5%"></i></span><b>0.565</b></span></td>
+            <td>0.793</td>
+          </tr>
+          <tr>
+            <td><span class="m"><span class="m__name">GROVER</span><span class="src src--repro">Reproduced</span></span></td>
+            <td>0.809</td><td>0.662</td><td>0.883</td><td>0.743</td><td>0.696</td>
+            <td class="col-mcc"><span class="mcc"><span class="mcc__track"><i style="width:56.4%"></i></span><b>0.564</b></span></td>
+            <td>0.862</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="res__note" data-reveal>
+      DeepPro·v2 ranks first on six of the seven metrics and ties msBERT-Promoter for the best specificity —
+      its widest margin is on MCC, <b>+0.042</b> over the strongest baseline. Solid chips
+      (<span class="src src--repro src--inline">Reproduced</span>) mark methods we re-trained under one identical protocol;
+      dashed chips (<span class="src src--cited src--inline">Reported</span>) mark figures quoted from the original
+      papers, which did not always publish every metric (<span class="na">—</span> = not reported).
+    </p>
+  </div>
+</section>
+
+<footer class="colophon">
+  <div class="wrap">
+    <div class="colophon__grid">
+      <div>
+        <div class="colophon__brand">DeepPro<span>·v2</span></div>
+        <p class="colophon__note">A gated mixture-of-experts with a differentiable promoter grammar for
+          prokaryotic promoter prediction across 23 species.</p>
+      </div>
+      <div>
+        <h4>Method</h4>
+        <ul>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#method">Three additions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Evidence</h4>
+        <ul>
+          <li><a href="#figures">Figure library</a></li>
+          <li><a href="#results">Results table</a></li>
+          <li><a href="#abstract">Abstract</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="colophon__foot">
+      <small>DeepPro·v2 — checkpoint build</small>
+      <small>23 species · 5 experts · 6 grammar experts</small>
+    </div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden aria-hidden="true">
+  <div class="lightbox__backdrop" data-close></div>
+  <div class="lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+    <button class="lightbox__close" data-close aria-label="Close (Esc)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="lightbox__stage">
+      <button class="lightbox__nav lightbox__nav--prev" data-prev aria-label="Previous figure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <img id="lbImg" alt="" />
+      <button class="lightbox__nav lightbox__nav--next" data-next aria-label="Next figure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <figcaption class="lightbox__cap">
+      <span class="lightbox__slug" id="lbSlug"></span>
+      <div class="lightbox__tags"><span class="fig-tag" id="lbTag"></span><span class="act-tag" id="lbAct"></span></div>
+      <h3 id="lbTitle"></h3>
+      <p class="lightbox__find" id="lbFind"></p>
+      <div class="lightbox__scope" id="lbScope" hidden>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="7" stroke="currentColor"/><path d="M8 4.5v4.5M8 11.2v.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <span id="lbScopeTxt"></span>
+      </div>
+      <span class="lightbox__count" id="lbCount"></span>
+    </figcaption>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

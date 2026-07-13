@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# inference outputs
+iProV2/infer_out/
+
+# large downloads from Zenodo (keep the README placeholders, ignore the payload)
+/data/Benchmark Dataset/
+/weights/s*/
+*.pth
+*.npz
+*.npy
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
