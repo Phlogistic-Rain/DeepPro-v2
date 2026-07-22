@@ -605,6 +605,16 @@ a:focus-visible, button:focus-visible, .filter:focus-visible {
 }
 .theme-toggle:hover { color: var(--fg); border-color: var(--line-strong); background: var(--ink-2); }
 .theme-toggle svg { width: 16px; height: 16px; }
+
+.gh-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex: none;
+  border: 1px solid var(--line-2); border-radius: 100px;
+  color: var(--fg-2);
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease), background 0.25s var(--ease);
+}
+.gh-link:hover { color: var(--fg); border-color: var(--line-strong); background: var(--ink-2); }
+.gh-link svg { width: 17px; height: 17px; }
 .theme-toggle .ico-moon { display: none; }
 [data-theme="light"] .theme-toggle .ico-sun { display: none; }
 [data-theme="light"] .theme-toggle .ico-moon { display: block; }
