@@ -7,7 +7,7 @@ __pycache__/
 # inference outputs
 iProV2/infer_out/
 
-# large downloads from Zenodo (keep the README placeholders, ignore the payload)
+# large external archives (keep the README placeholders, ignore the payload)
 /data/Benchmark Dataset/
 /weights/s*/
 *.pth

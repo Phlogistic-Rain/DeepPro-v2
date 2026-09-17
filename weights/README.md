@@ -1,22 +1,22 @@
 # Model weights (download separately)
 
 This folder is an **empty placeholder**. The trained DeepPro‑v2 checkpoints are
-hosted on Zenodo (large binaries) and are **not** shipped in the GitHub
-repository.
+large binaries and are **not** shipped in the GitHub repository; they are
+available from the authors on request.
 
-## What is published
+## What is distributed
 
-The released subset contains **one fold (fold‑1) per species**, i.e. 23
+The distributed subset contains **one fold (fold‑1) per species**, i.e. 23
 checkpoints (~35 GB total; each checkpoint is a full DeepPro‑v2 `state_dict`
 ≈ 1.5 GB: all five fine‑tuned backbones + fusion + grammar branch).
 
 > The full 5‑fold × 23‑species ensemble used for the headline number is ~162 GB
-> and is available on request; fold‑1 reproduces the single‑model test metrics.
+> and is likewise available on request; fold‑1 reproduces the single‑model test
+> metrics.
 
-## Download
+## Install
 
-1. Get the weights archive from the
-   [Zenodo record](https://zenodo.org/records/21344602?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImM2NWQ3YmMyLTdkMmEtNDFjMS1iNDlmLTYyOTQwY2FlZmYyYiIsImRhdGEiOnt9LCJyYW5kb20iOiI4YTVhNGI3OGZiMTE4NWQ4MWM2MDU4MTM3ZDk1Y2NjZiJ9.zgznyGzDRiuKhrH1wMfE68DVdpgFWpH-9pl2LoxQh7LtMRUXdJ715efByvgmlGTwHWs9MHK5AjEj-xKr5_9WvA).
+1. Obtain the weights archive from the authors.
 2. Extract it **here**, so the layout becomes:
 
 ```

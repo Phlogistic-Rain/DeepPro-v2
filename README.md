@@ -15,7 +15,7 @@ aggregating **five** genomic language‑model backbones through a
 soft mixture‑of‑experts fusion, with an interpretable σ‑factor *grammar* branch.
 
 - 📄 **Paper**: `<PAPER_URL>` (TODO)
-- 💾 **Data & weights (Zenodo)**: [zenodo.org/records/21344602](https://zenodo.org/records/21344602?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImM2NWQ3YmMyLTdkMmEtNDFjMS1iNDlmLTYyOTQwY2FlZmYyYiIsImRhdGEiOnt9LCJyYW5kb20iOiI4YTVhNGI3OGZiMTE4NWQ4MWM2MDU4MTM3ZDk1Y2NjZiJ9.zgznyGzDRiuKhrH1wMfE68DVdpgFWpH-9pl2LoxQh7LtMRUXdJ715efByvgmlGTwHWs9MHK5AjEj-xKr5_9WvA)
+- 💾 **Data & weights**: available on request (see [Download data and weights](#download-data-and-weights))
 - 🌐 **Interactive demo**: https://phlogistic-rain.github.io/DeepPro-v2/ 
 
 ---
@@ -150,8 +150,8 @@ DeepPro-v2/
 │   ├── dataset.py          # 5-view Dataset (tokenizes all views up front)
 │   └── infer.py            # ⭐ minimal inference entry point
 ├── docs/                   # self-contained showcase site → GitHub Pages (see below)
-├── data/                   # ⬇ empty placeholder — download benchmark from Zenodo
-└── weights/                # ⬇ empty placeholder — download checkpoints from Zenodo
+├── data/                   # ⬇ empty placeholder — benchmark dataset (available on request)
+└── weights/                # ⬇ empty placeholder — checkpoints (available on request)
 ```
 
 > **Note**: DeepPro‑v2 builds on four V1 backbones, so the `iPro/` package is
@@ -181,7 +181,9 @@ connection is required once, after which they are cached locally.
 
 ## Download data and weights
 
-Both are hosted on Zenodo and extracted into the empty placeholders:
+Neither the benchmark dataset nor the trained checkpoints are shipped in this
+repository (large binaries). Both are available from the authors on request and
+are extracted into the empty placeholders:
 
 - **Dataset** → `data/` — see [`data/README.md`](data/README.md)
 - **Weights** → `weights/` — see [`weights/README.md`](weights/README.md)

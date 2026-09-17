@@ -1,13 +1,12 @@
 # Benchmark dataset (download separately)
 
 This folder is an **empty placeholder**. The prokaryotic promoter benchmark
-(23 species, 81‑bp sequences) is hosted on Zenodo and is **not** shipped in the
-GitHub repository.
+(23 species, 81‑bp sequences) is **not** shipped in the GitHub repository; the
+archive is available from the authors on request.
 
-## Download
+## Install
 
-1. Get the dataset archive from the
-   [Zenodo record](https://zenodo.org/records/21344602?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImM2NWQ3YmMyLTdkMmEtNDFjMS1iNDlmLTYyOTQwY2FlZmYyYiIsImRhdGEiOnt9LCJyYW5kb20iOiI4YTVhNGI3OGZiMTE4NWQ4MWM2MDU4MTM3ZDk1Y2NjZiJ9.zgznyGzDRiuKhrH1wMfE68DVdpgFWpH-9pl2LoxQh7LtMRUXdJ715efByvgmlGTwHWs9MHK5AjEj-xKr5_9WvA).
+1. Obtain the dataset archive from the authors.
 2. Extract it **here**, so the layout becomes:
 
 ```

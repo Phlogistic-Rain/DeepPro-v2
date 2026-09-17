@@ -88,13 +88,13 @@ def metrics_from(y_true, prob):
 def run_species(model, species, data_dir, weights_dir, out_dir, batch, use_amp):
     test_csv = os.path.join(data_dir, "Test", f"{species}_test.csv")
     if not os.path.exists(test_csv):
-        print(f"[s{species}] missing test data: {test_csv} -- skipped (see root README: download data from Zenodo)")
+        print(f"[s{species}] missing test data: {test_csv} -- skipped (see root README: obtain the dataset archive)")
         return None
 
     ckpts = find_ckpts(weights_dir, species)
     if not ckpts:
         print(f"[s{species}] no weights found: {os.path.join(weights_dir, f's{species}')}/... "
-              f"-- skipped (see root README: download weights from Zenodo)")
+              f"-- skipped (see root README: obtain the weights archive)")
         return None
 
     ds = TextDatasetV2(test_csv)
