@@ -10,9 +10,9 @@ The distributed subset contains **one fold (fold‑1) per species**, i.e. 23
 checkpoints (~35 GB total; each checkpoint is a full DeepPro‑v2 `state_dict`
 ≈ 1.5 GB: all five fine‑tuned backbones + fusion + grammar branch).
 
-> The full 5‑fold × 23‑species ensemble used for the headline number is ~162 GB
-> and is likewise available on request; fold‑1 reproduces the single‑model test
-> metrics.
+> The full 5‑fold × 23‑species ensemble (~162 GB) that produced the headline
+> ensemble metrics is **no longer retained** and cannot be supplied. The fold‑1
+> subset above reproduces the single‑model per‑species test metrics.
 
 ## Install
 
